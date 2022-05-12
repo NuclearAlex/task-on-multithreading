@@ -3,12 +3,13 @@ package classes;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Producer extends Thread {
+public class Producer implements Runnable {
     private final List<String> products;
     private final Stock stock;
+    private final String name;
 
     public Producer(String name, Stock stock, List<String> productList) {
-        super(name);
+        this.name = name;
         this.stock = stock;
         this.products = new ArrayList<>();
         products.addAll(productList);
@@ -24,7 +25,8 @@ public class Producer extends Thread {
 
     @Override
     public String toString() {
-        return Consumer.GREEN + "Producer " + getName() + " put all products to stock!" + Consumer.DEFAULT;
+        return Consumer.GREEN + "Producer " + name + " put all products to stock!"
+                + Consumer.DEFAULT;
     }
 
     @Override
@@ -35,9 +37,8 @@ public class Producer extends Thread {
                 try {
                     String[] temp = product.split("; ");
                     stock.addProduct(product);
-                    System.out.println(getName() + " added product " + temp[0] + " to stock");
+                    System.out.println(name + " added product " + temp[0] + " to stock");
                 } catch (NullPointerException e) {
-                    System.out.println(this);
                 }
             }
             try {
@@ -45,6 +46,9 @@ public class Producer extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+        if (stock.isSoldProducts()) {
+            System.out.println(this);
         }
     }
 }
